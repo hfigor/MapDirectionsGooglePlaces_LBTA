@@ -12,6 +12,17 @@ import SwiftUI
 
 import LBTATools
 
+
+extension MainController: MKMapViewDelegate {
+
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+
+        let annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "id")
+        annotationView.canShowCallout = true
+        return annotationView
+    }
+}
+
 class MainController: UIViewController {
     
     let mapView = MKMapView() // now using auto layout
@@ -19,9 +30,9 @@ class MainController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        let mapView = MKMapView(frame: view.frame)
+        mapView.delegate = self
         
-        
+//      let mapView = MKMapView(frame: view.frame)
         view.addSubview(mapView)
         
         // Use LBTATools
@@ -39,19 +50,37 @@ class MainController: UIViewController {
        // mapView.mapType = .satellite // set map type
         
         setupRegionForMap()
+        
+        setupAnnotationsForMap()
     }
-// MARK: Set Map Region
+
+    // MARK: Set up map annotations
+    fileprivate func setupAnnotationsForMap() {
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = CLLocationCoordinate2D(latitude: 37.7666, longitude: -122.427290)
+        annotation.title = "San Francisco"
+        annotation.subtitle = "CA"
+        mapView.addAnnotation(annotation)
+
+        let appleCampusAnnotation = MKPointAnnotation()
+        appleCampusAnnotation.coordinate = CLLocationCoordinate2D(latitude: 37.3326, longitude: -122.030024)
+        appleCampusAnnotation.title = "Apple Campus"
+        mapView.addAnnotation(appleCampusAnnotation)
         
+        // to show all annotations within your bounds when reloading:
+        mapView.showAnnotations(self.mapView.annotations, animated: true)
         
-        
+    }
+    
+    // MARK: Set Map Region
         fileprivate func setupRegionForMap() {
-            let centerCoordinate = CLLocationCoordinate2D(latitude: 34.091708, longitude: -84.590092)
+            let centerCoordinate = CLLocationCoordinate2D(latitude: 37.7666, longitude: -122.427290)
             let span = MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
             let region = MKCoordinateRegion(center: centerCoordinate, span: span)
             mapView.setRegion(region, animated: true)
-
     }
     
+
     // MARK: SwiftUI Preview
   
     
